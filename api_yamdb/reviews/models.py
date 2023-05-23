@@ -18,7 +18,7 @@ class Review(models.Model):
     text = models.TextField()
     score = models.IntegerField(choices=CHOICES)
     pub_date = pub_date = models.DateTimeField(
-        'Дата публикации',
+        'Дата публикации отзыва',
         auto_now_add=True
     )
 
@@ -35,7 +35,7 @@ class Comment(models.Model):
     )
     text = models.TextField()
     pub_date = pub_date = models.DateTimeField(
-        'Дата публикации',
+        'Дата публикации комментария',
         auto_now_add=True
     )
 
