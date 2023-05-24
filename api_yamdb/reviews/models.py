@@ -2,7 +2,7 @@ from django.db import models
 
 
 
-CHOICES = [i for i in range(11)]
+CHOICES = [i for i in range(1,11)]
 
 
 class Title():
@@ -17,7 +17,7 @@ class Review(models.Model):
     )
     text = models.TextField()
     score = models.IntegerField(choices=CHOICES)
-    pub_date = pub_date = models.DateTimeField(
+    pub_date = models.DateTimeField(
         'Дата публикации отзыва',
         auto_now_add=True
     )
@@ -34,7 +34,7 @@ class Comment(models.Model):
         related_name='comments',
     )
     text = models.TextField()
-    pub_date = pub_date = models.DateTimeField(
+    pub_date = models.DateTimeField(
         'Дата публикации комментария',
         auto_now_add=True
     )
