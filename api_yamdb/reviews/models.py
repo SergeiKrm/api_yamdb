@@ -1,7 +1,5 @@
 from django.db import models
-from django.core.validators import MaxValueValidator, MinValueValidator
-from django.db import models
-from users.models import User
+
 from .validators import characters_validator, year_validator
 
 
@@ -29,11 +27,11 @@ class Category(models.Model):
 
 class Genre(models.Model):
     name = models.CharField(
-        max_length=100,
+        max_length=256,
         verbose_name='Название',
         help_text='Выберите жанр'
     )
-    slug = models.SlugField(max_length=20, unique=True, verbose_name='Слаг')
+    slug = models.SlugField(max_length=50, unique=True, verbose_name='Слаг')
 
     class Meta:
         ordering = ['name']
@@ -46,27 +44,22 @@ class Genre(models.Model):
 
 class Title(models.Model):
     name = models.CharField(
-        max_length=100,
+        max_length=256,
         verbose_name='Название',
         help_text='Выберите название произведения'
     )
     year = models.IntegerField(
         validators=[year_validator],
         verbose_name='Год',
-        null=True,
-        blank=True
     )
     category = models.ForeignKey(
         Category,
         verbose_name='Категория',
         on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
         related_name='titles'
     )
     genre = models.ManyToManyField(
         Genre,
-        blank=True,
         verbose_name='Жанр',
         related_name='titles'
     )
