@@ -3,6 +3,7 @@ from .models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
+    
     class Meta:
         model = User
         fields = (
@@ -13,3 +14,10 @@ class UserSerializer(serializers.ModelSerializer):
             'bio',
             'role'
         )
+
+    # Использовать имя 'me' в качестве username запрещено.
+    def validate_username(self, value):
+        if value == 'me':
+            raise serializers.ValidationError(
+                'Использовать имя "me" в качестве username запрещено!')
+        return value
