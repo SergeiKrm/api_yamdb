@@ -11,14 +11,26 @@ class User(AbstractUser):
         ('admin', 'Admin'),
     ]
 
-    # переопределяю поле "email", т.к. в базовой модели это поле
-    # не уникальное и не обязательное.
+    # переопределяю поле "email" и 'username', т.к. в базовой модели
+    # эти поля не уникальное и не обязательное.
+    username = models.CharField(
+        max_length=150,
+        unique=True,
+        blank=False
+    )
     email = models.EmailField(
         max_length=254,
         unique=True,
         blank=False
     )
-
+    first_name = models.CharField(
+        max_length=150,
+        blank=True,
+    )
+    last_name = models.CharField(
+        max_length=150,
+        blank=True,
+    )
     bio = models.TextField(
         verbose_name='Биография',
         blank=True,
@@ -29,3 +41,7 @@ class User(AbstractUser):
         choices=Roles,
         default='user'
     )
+
+    def __str__(self):
+        full_name = self.get_full_name()
+        return full_name
