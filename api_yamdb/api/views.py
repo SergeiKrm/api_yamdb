@@ -1,7 +1,6 @@
 from django.shortcuts import get_object_or_404
-
-import DjangoFilterBackend
-import viewsets
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import viewsets
 from reviews.models import Category, Genre, Title
 
 from .filters import TitleFilter
