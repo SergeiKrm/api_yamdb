@@ -23,7 +23,6 @@ class UserSerializer(serializers.ModelSerializer):
             'role'
         )
 
-    # Использовать имя 'me' в качестве username запрещено.
     def validate_username(self, value):
         if value == 'me':
             raise serializers.ValidationError(
@@ -48,3 +47,18 @@ class SignUpSerialier(serializers.ModelSerializer):
 class TokenCreateSerializer(serializers.Serializer):
     username = serializers.CharField()
     confirmation_code = serializers.CharField()
+
+
+class EditMyselfSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = (
+            'username',
+            'email',
+            'first_name',
+            'last_name',
+            'bio',
+            'role'
+        )
+        read_only_fields = ('role',)
