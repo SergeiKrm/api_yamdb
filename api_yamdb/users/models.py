@@ -47,4 +47,3 @@ class User(AbstractUser):
             full_name = self.get_full_name()
             return full_name
         return self.username
-
