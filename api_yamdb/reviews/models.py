@@ -113,6 +113,13 @@ class Review(models.Model):
         auto_now_add=True
     )
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                name='duplicate_review_constrain',
+                fields=['title_id', 'author']
+            )]
+
     def __str__(self) -> str:
         return self.text
 
