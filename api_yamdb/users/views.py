@@ -1,12 +1,15 @@
 from django.contrib.auth import tokens
 from django.core.mail import send_mail
-from django.shortcuts import get_object_or_404, render
-from rest_framework import status, viewsets
-from rest_framework.decorators import action, api_view
+from django.shortcuts import get_object_or_404
+from rest_framework import filters, status, viewsets
+from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import User
+from .pagination import UserListPagination
+from .permissions import IsAdmin
 from .serializers import (
     EditMyselfSerializer,
     SignUpSerialier,
@@ -15,13 +18,18 @@ from .serializers import (
 )
 
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(viewsets.ModelViewSet): # пермишн Admin
     queryset = User.objects.all()
     serializer_class = UserSerializer
     lookup_field = 'username'
+    permission_classes = (IsAdmin,)
+    pagination_class = UserListPagination
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('username',)
 
 
-@api_view(['POST'])  # пермишн Any прилепить
+@api_view(['POST'])
+@permission_classes([AllowAny])
 def sign_up(request):
     '''Получает код подтверждения на переданный email.'''
     serializer = SignUpSerialier(data=request.data)
@@ -35,15 +43,17 @@ def sign_up(request):
             'Use confirmation code to sign up',
             f'Код подтверждения "{confirmation_code}".',
             'yamdb@team.com',
-            [f'{email}'],  # "Кому"
-            fail_silently=False,  # Сообщать об ошибках
+            [f'{email}'],
+            fail_silently=False,
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['POST'])  # пермишн Any прилепить
+@api_view(['POST'])
+@permission_classes([AllowAny])
 def token_create(request):
+    '''Получает JWT-токен в обмен на username и confirmation code.'''
     serializer = TokenCreateSerializer(data=request.data)
     if serializer.is_valid():
         user = get_object_or_404(
@@ -57,17 +67,18 @@ def token_create(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET', 'PATCH']) 
-def edit_miself(request):   # пермишн только на владельца учётки
+@api_view(['GET', 'PATCH'])
+@permission_classes([IsAuthenticated])
+def edit_miself(request):
     "Изменяет данные своей учетной записи."
     user = User.objects.get(username=request.user.username)
-    
     if request.method == 'PATCH':
-        serializer = EditMyselfSerializer(user, data=request.data, partial=True)
+        serializer = EditMyselfSerializer(
+            user, data=request.data, partial=True
+        )
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
     serializer = EditMyselfSerializer(user)
     return Response(serializer.data, status=status.HTTP_200_OK)

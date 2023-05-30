@@ -6,9 +6,11 @@ from users.models import User
 
 class UserSerializer(serializers.ModelSerializer):
     username = serializers.CharField(
+        max_length=150,
         validators=[UniqueValidator(queryset=User.objects.all())]
     )
     email = serializers.EmailField(
+        max_length=254,
         validators=[UniqueValidator(queryset=User.objects.all())]
     )
 
@@ -31,10 +33,12 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class SignUpSerialier(serializers.ModelSerializer):
-    username = serializers.CharField(
+    username = serializers.CharField(       # RegexField(regex='^[\w.@+-]+\z',
+        max_length=150,
         validators=[UniqueValidator(queryset=User.objects.all())]
     )
     email = serializers.EmailField(
+        max_length=254,
         validators=[UniqueValidator(queryset=User.objects.all())]
     )
 
