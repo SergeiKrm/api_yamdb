@@ -1,36 +1,58 @@
-# import csv
-# from django.core.management.base import BaseCommand
-# from reviews.models import Title, Review, Comment
+import csv
+import os
+from django.core.management.base import BaseCommand
+from reviews.models import (
+    Category,
+    Genre,
+    Title,
+    Review,
+    Comment,
+    GenreTitle
+)
+from users.models import User
+from reviews.utils import (
+    get_attrs
+)
 
 
-# MODELS = {
-#     'Title': Title,
-#     'Review': Review,
-#     'Comment': Comment,
-# }
+MODELS = {
+    'users': User,
+    'category': Category,
+    'genre': Genre,
+    'titles': Title,
+    'genre_title': GenreTitle,
+    'review': Review,
+    'comments': Comment,
+}
 
 
-# class Command(BaseCommand):
-#     help = 'Creates database from csv files'
+class Command(BaseCommand):
+    help = 'Creates database from csv files'
 
-#     def add_arguments(self, parser):
-#         parser.add_argument('--path', type=str)
-#         parser.add_argument('--model', type=str)
+    def add_arguments(self, parser):
+        parser.add_argument('--path', type=str)
+        # parser.add_argument('--model', type=str)
 
-#     def handle(self, *args, **kwargs):
-#         path = kwargs['path']
-#         model_name = kwargs['model']
-#         model = MODELS[model_name]
-#         fields = [f.name for f in model._meta.get_fields()]
+    def handle(self, *args, **kwargs):
+        for name in MODELS.keys():
+            file_name = os.path.join(os.path.join(
+                kwargs['path'], name + '.csv'
+            ))
+            model = MODELS[name]
+            model.objects.all().delete()
 
-#         with open(path, 'rt') as f:
-#             reader = csv.reader(f, dialect='excel')
-#             for row in reader:
-#                 attrs = {}
-#                 for i in range(len(fields)):
-#                     attrs[fields[i]]: row[i]
+            with open(file_name, newline='', encoding='utf-8') as f:
+                reader = csv.DictReader(f)
+                cols = reader.fieldnames
+                for row in reader:
+                    attrs = get_attrs(
+                        model,
+                        cols,
+                        row
+                    )
 
-#                 instance = model.objects.create(
-#                     **attrs
-#                 )
-#                 instance.save()
+                    if not model.objects.filter(**attrs).exists():
+                        instance = model.objects.create(
+                            **attrs
+                        )
+                        instance.save()

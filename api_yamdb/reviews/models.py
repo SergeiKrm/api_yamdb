@@ -1,12 +1,10 @@
 from django.db import models
-from django.contrib.auth import get_user_model
 
 from .validators import characters_validator, year_validator
+from users.models import User
 
 
 CHOICES = [(i, i) for i in range(1, 11)]
-
-User = get_user_model()
 
 
 class Category(models.Model):
@@ -67,6 +65,7 @@ class Title(models.Model):
     )
     genre = models.ManyToManyField(
         Genre,
+        through='GenreTitle',
         verbose_name='Жанр',
         related_name='titles'
     )
@@ -84,6 +83,21 @@ class Title(models.Model):
         return self.name
 
 
+class GenreTitle(models.Model):
+    title = models.ForeignKey(
+        Title,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True
+    )
+    genre = models.ForeignKey(
+        Genre,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True
+    )
+
+
 class Review(models.Model):
     title_id = models.ForeignKey(
         Title,
@@ -98,6 +112,13 @@ class Review(models.Model):
         'Дата публикации отзыва',
         auto_now_add=True
     )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                name='duplicate_review_constrain',
+                fields=['title_id', 'author']
+            )]
 
     def __str__(self) -> str:
         return self.text
