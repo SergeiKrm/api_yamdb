@@ -2,7 +2,7 @@ from django.contrib.auth import tokens
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
 from rest_framework import filters, status, viewsets
-from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -18,7 +18,7 @@ from .serializers import (
 )
 
 
-class UserViewSet(viewsets.ModelViewSet): # пермишн Admin
+class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     lookup_field = 'username'
@@ -32,22 +32,35 @@ class UserViewSet(viewsets.ModelViewSet): # пермишн Admin
 @permission_classes([AllowAny])
 def sign_up(request):
     '''Получает код подтверждения на переданный email.'''
-    serializer = SignUpSerialier(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        user = get_object_or_404(
-            User, username=serializer.validated_data['username'])
-        confirmation_code = tokens.default_token_generator.make_token(user)
-        email = serializer.validated_data['email']
-        send_mail(
-            'Use confirmation code to sign up',
-            f'Код подтверждения "{confirmation_code}".',
-            'yamdb@team.com',
-            [f'{email}'],
-            fail_silently=False,
-        )
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    user = User.objects.filter(username=request.data.get('username'),
+                               email=request.data.get('email'))
+    if not user.exists():
+        serializer = SignUpSerialier(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            user = get_object_or_404(
+                User, username=serializer.validated_data['username'])
+            confirmation_code = tokens.default_token_generator.make_token(user)
+            email = serializer.validated_data['email']
+            send_mail(
+                'Use confirmation code to sign up',
+                f'Код подтверждения "{confirmation_code}".',
+                'yamdb@team.com',
+                [f'{email}'],
+                fail_silently=False,
+            )
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    confirmation_code = tokens.default_token_generator.make_token(user[0])
+    email = user[0].email
+    send_mail(
+        'Use confirmation code to sign up',
+        f'Код подтверждения "{confirmation_code}".',
+        'yamdb@team.com',
+        [f'{email}'],
+        fail_silently=False,
+    )
+    return Response(request.data, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
