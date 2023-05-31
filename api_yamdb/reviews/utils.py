@@ -33,7 +33,7 @@ def get_attrs(model, col_names, row):
                     id=int(row['genre_id'])
                 )
             elif model is Review:
-                attrs['title_id'] = Title.objects.get(
+                attrs['title'] = Title.objects.get(
                     id=int(row['title_id'])
                 )
 
@@ -41,7 +41,7 @@ def get_attrs(model, col_names, row):
                     id=int(row['author'])
                 )
             elif model is Comment:
-                attrs['review_id'] = Review.objects.get(
+                attrs['review'] = Review.objects.get(
                     id=int(row['review_id'])
                 )
 
