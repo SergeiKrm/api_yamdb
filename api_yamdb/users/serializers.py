@@ -72,6 +72,16 @@ class TokenCreateSerializer(serializers.Serializer):
 
 
 class EditMyselfSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(
+        max_length=150,
+        validators=[
+            UniqueValidator(queryset=User.objects.all()),
+            RegexValidator(
+                regex=r'^[\w.@+-]+$',
+                message='Имя пользователя содержит недопустимый символ'
+            )
+        ]
+    )
 
     class Meta:
         model = User

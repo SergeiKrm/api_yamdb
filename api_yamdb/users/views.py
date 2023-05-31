@@ -21,6 +21,7 @@ from .serializers import (
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    http_method_names = ['get', 'post', 'patch', 'delete']
     lookup_field = 'username'
     permission_classes = (IsAdmin,)
     pagination_class = UserListPagination
