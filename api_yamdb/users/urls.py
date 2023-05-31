@@ -1,14 +1,20 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenVerifyView,
+)
 
-from .views import UserViewSet
+from .views import UserViewSet, sign_up, token_create, edit_miself
 
-router = DefaultRouter()
+router_v1 = DefaultRouter()
 
-router.register('users', UserViewSet)
+router_v1.register('users', UserViewSet)
 
 urlpatterns = [
-    path('', include(router.urls)),
-    path('auth/', include('djoser.urls')),
-    path('auth/', include('djoser.urls.jwt')),
+    path('users/me/', edit_miself, name='edit_myself'),
+    path('', include(router_v1.urls)),
+    path('auth/signup/', sign_up, name='signup'),
+    path('auth/token/', token_create, name='token_craete'),
 ]

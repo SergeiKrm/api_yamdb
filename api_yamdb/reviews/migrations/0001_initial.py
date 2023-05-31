@@ -57,6 +57,7 @@ class Migration(migrations.Migration):
                 ('year', models.IntegerField(validators=[reviews.validators.year_validator], verbose_name='Год')),
                 ('description', models.TextField(blank=True, null=True, verbose_name='Описание')),
                 ('category', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='titles', to='reviews.category', verbose_name='Категория')),
+
                 ('genre', models.ManyToManyField(related_name='titles', through='reviews.GenreTitle', to='reviews.Genre', verbose_name='Жанр')),
             ],
             options={
@@ -76,11 +77,14 @@ class Migration(migrations.Migration):
                 ('title_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='reviews', to='reviews.title')),
             ],
         ),
+
+
         migrations.AddField(
             model_name='genretitle',
             name='title',
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='reviews.title'),
         ),
+
         migrations.CreateModel(
             name='Comment',
             fields=[
