@@ -114,6 +114,7 @@ class Review(models.Model):
     )
 
     class Meta:
+        ordering = ['id']
         constraints = [
             models.UniqueConstraint(
                 name='duplicate_review_constrain',
@@ -137,6 +138,9 @@ class Comment(models.Model):
         'Дата публикации комментария',
         auto_now_add=True
     )
+
+    class Meta:
+        ordering = ['id']
 
     def __str__(self) -> str:
         return self.text

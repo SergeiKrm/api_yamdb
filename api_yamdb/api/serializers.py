@@ -4,7 +4,6 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.relations import SlugRelatedField
 from rest_framework.validators import UniqueValidator
 
-
 from reviews.models import (
     Title,
     Category,
@@ -32,7 +31,7 @@ class GenreSerializer(serializers.ModelSerializer):
 class TitleSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
     genre = GenreSerializer(many=True, read_only=True)
-    # rating = serializers.FloatField(read_only=True)
+    rating = serializers.FloatField(read_only=True)
 
     class Meta:
         fields = '__all__'
