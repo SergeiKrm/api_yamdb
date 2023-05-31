@@ -2,7 +2,6 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
-# Расширяю модель пользователя.
 class User(AbstractUser):
 
     Roles = [
@@ -11,8 +10,6 @@ class User(AbstractUser):
         ('admin', 'Admin'),
     ]
 
-    # переопределяю поле "email" и 'username', т.к. в базовой модели
-    # эти поля не уникальное и не обязательное.
     username = models.CharField(
         max_length=150,
         unique=True,
@@ -41,6 +38,10 @@ class User(AbstractUser):
         choices=Roles,
         default='user'
     )
+
+    class Meta:
+        ordering = ('username',)
+        verbose_name = 'Пользователь'
 
     def __str__(self):
         if self.first_name and self.last_name:
