@@ -5,11 +5,11 @@ from rest_framework.relations import SlugRelatedField
 from rest_framework.validators import UniqueValidator
 
 from reviews.models import (
-    Title,
     Category,
+    Comment,
     Genre,
     Review,
-    Comment
+    Title
 )
 from users.models import User
 
@@ -161,3 +161,4 @@ class EditMyselfSerializer(serializers.ModelSerializer):
             'role'
         )
         read_only_fields = ('role',)
+
