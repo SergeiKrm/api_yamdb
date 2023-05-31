@@ -6,7 +6,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import(AllowAny, IsAuthenticated)
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -17,6 +17,7 @@ from .mixins import ListCreateDestroyViewSet
 from .pagination import UserListPagination
 from .permissions import (
     IsAdmin,
+    IsAdminOrReadOnly,
     IsAuthorOrModeratorOrAdminOrReadOnly
 )
 from .serializers import (
@@ -35,19 +36,21 @@ from .serializers import (
 class CategoryViewSet(ListCreateDestroyViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    permission_classes = (IsAdminOrReadOnly,)
 
 
 class GenreViewSet(ListCreateDestroyViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
+    permission_classes = (IsAdminOrReadOnly,)
 
 
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.annotate(
         rating=Avg('reviews__score')).order_by('rating')
     serializer_class = TitleSerializer
-
-    filter_backends = [DjangoFilterBackend]
+    permission_classes = (IsAdminOrReadOnly,)
+    filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
 
     def perform_create(self, serializer):
@@ -98,7 +101,7 @@ class CommentViewSet(viewsets.ModelViewSet):
         serializer.save(
             author=self.request.user,
             review=review
-        ) 
+        )
 
 
 class UserViewSet(viewsets.ModelViewSet):
