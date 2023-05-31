@@ -1,6 +1,10 @@
 from django.db import models
 
 from .validators import characters_validator, year_validator
+from users.models import User
+
+
+CHOICES = [(i, i) for i in range(1, 11)]
 
 
 class Category(models.Model):
@@ -56,10 +60,12 @@ class Title(models.Model):
         Category,
         verbose_name='Категория',
         on_delete=models.SET_NULL,
+        null=True,
         related_name='titles'
     )
     genre = models.ManyToManyField(
         Genre,
+        through='GenreTitle',
         verbose_name='Жанр',
         related_name='titles'
     )
@@ -75,3 +81,66 @@ class Title(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class GenreTitle(models.Model):
+    title = models.ForeignKey(
+        Title,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True
+    )
+    genre = models.ForeignKey(
+        Genre,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True
+    )
+
+
+class Review(models.Model):
+    title = models.ForeignKey(
+        Title,
+        on_delete=models.CASCADE,
+        related_name='reviews',
+    )
+    text = models.TextField()
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='reviews')
+    score = models.IntegerField(choices=CHOICES)
+    pub_date = models.DateTimeField(
+        'Дата публикации отзыва',
+        auto_now_add=True
+    )
+
+    class Meta:
+        ordering = ['id']
+        constraints = [
+            models.UniqueConstraint(
+                name='duplicate_review_constrain',
+                fields=['title_id', 'author']
+            )]
+
+    def __str__(self) -> str:
+        return self.text
+
+
+class Comment(models.Model):
+    review = models.ForeignKey(
+        Review,
+        on_delete=models.CASCADE,
+        related_name='comments',
+    )
+    text = models.TextField()
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='comments')
+    pub_date = models.DateTimeField(
+        'Дата публикации комментария',
+        auto_now_add=True
+    )
+
+    class Meta:
+        ordering = ['id']
+
+    def __str__(self) -> str:
+        return self.text
