@@ -39,6 +39,10 @@ class User(AbstractUser):
         default='user'
     )
 
+    class Meta:
+        ordering = ('username',)
+        verbose_name = 'Пользователь'
+
     def __str__(self):
         if self.first_name and self.last_name:
             full_name = self.get_full_name()
