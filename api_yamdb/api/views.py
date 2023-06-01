@@ -182,4 +182,3 @@ def edit_miself(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     serializer = EditMyselfSerializer(user)
     return Response(serializer.data, status=status.HTTP_200_OK)
-

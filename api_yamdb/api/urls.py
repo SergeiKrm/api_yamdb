@@ -1,5 +1,6 @@
 from django.urls import include, path
 from rest_framework import routers
+from django.contrib import admin
 
 from .views import (
     CategoryViewSet,
@@ -31,6 +32,7 @@ router_1.register(
 )
 
 urlpatterns = [
+    path('admin/', admin.site.urls),
     path('users/me/', edit_miself, name='edit_myself'),
     path('', include(router_1.urls)),
     path('auth/signup/', sign_up, name='signup'),

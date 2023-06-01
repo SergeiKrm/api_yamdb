@@ -1,4 +1,5 @@
 from django.contrib import admin
+from .models import Category, Title, Genre
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -20,3 +21,8 @@ class TitlesAdmin(admin.ModelAdmin):
     search_fields = ('name', 'category')
     empty_value_display = '-пусто-'
     list_editable = ('name', 'category')
+
+
+admin.site.register(Category, CategoryAdmin)
+admin.site.register(Genre, GenreAdmin)
+admin.site.register(Title, TitlesAdmin)
