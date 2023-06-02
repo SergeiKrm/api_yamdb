@@ -1,6 +1,5 @@
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
-from django.utils import timezone
 
 
 class CustomRegexValidator(RegexValidator):
@@ -17,14 +16,6 @@ class CustomRegexValidator(RegexValidator):
 
 
 characters_validator = CustomRegexValidator(
-    r'^[-a-zA-Z0-9_]+$',
-    'Применяйте символы латинского алфавита, цифры и знак подчёркивания. '
-    'Ввод содержит недопустимые символы: %(invalid_symbols)s'
+    r'^[\w.@+-]+$',
+    'Имя пользователя содержит недопустимые символы: %(invalid_symbols)s'
 )
-
-
-def year_validator(value):
-    if value > timezone.now().year:
-        raise ValidationError(
-            'Ошибка ввода года. Вы из будущего? Введите корректный год!'
-        )

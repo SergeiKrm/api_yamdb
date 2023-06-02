@@ -1,19 +1,25 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from .validators import characters_validator
+
+
+USER = 'user'
+MODERATOR = 'moderator'
+ADMIN = 'admin'
+ROLES = [
+    (USER, 'User'),
+    (MODERATOR, 'Moderator'),
+    (ADMIN, 'Admin'),
+]
+
 
 class User(AbstractUser):
-
-    Roles = [
-        ('user', 'User'),
-        ('moderator', 'Moderator'),
-        ('admin', 'Admin'),
-    ]
-
     username = models.CharField(
         max_length=150,
         unique=True,
-        blank=False
+        blank=False,
+        validators=[characters_validator]
     )
     email = models.EmailField(
         max_length=254,
@@ -35,7 +41,7 @@ class User(AbstractUser):
     role = models.CharField(
         max_length=50,
         blank=False,
-        choices=Roles,
+        choices=ROLES,
         default='user'
     )
 
@@ -44,7 +50,5 @@ class User(AbstractUser):
         verbose_name = 'Пользователь'
 
     def __str__(self):
-        if self.first_name and self.last_name:
-            full_name = self.get_full_name()
-            return full_name
-        return self.username
+        return (self.get_full_name()
+                if (self.first_name and self.last_name) else self.username)

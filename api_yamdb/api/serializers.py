@@ -1,4 +1,3 @@
-from django.core.validators import RegexValidator
 from rest_framework import serializers
 from rest_framework.generics import get_object_or_404
 from rest_framework.relations import SlugRelatedField
@@ -12,6 +11,7 @@ from reviews.models import (
     Title
 )
 from users.models import User
+from .validators import characters_validator
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -76,11 +76,8 @@ class UserSerializer(serializers.ModelSerializer):
     username = serializers.CharField(
         max_length=150,
         validators=[
-            UniqueValidator(queryset=User.objects.all()),
-            RegexValidator(
-                regex=r'^[\w.@+-]+$',
-                message='Имя пользователя содержит недопустимый символ'
-            )
+            characters_validator,
+            UniqueValidator(queryset=User.objects.all())
         ]
     )
     email = serializers.EmailField(
@@ -111,10 +108,7 @@ class SignUpSerialier(serializers.ModelSerializer):
         max_length=150,
         validators=[
             UniqueValidator(queryset=User.objects.all()),
-            RegexValidator(
-                regex=r'^[\w.@+-]+$',
-                message='Имя пользователя содержит недопустимый символ'
-            )
+            characters_validator
         ]
     )
     email = serializers.EmailField(
@@ -143,10 +137,7 @@ class EditMyselfSerializer(serializers.ModelSerializer):
         max_length=150,
         validators=[
             UniqueValidator(queryset=User.objects.all()),
-            RegexValidator(
-                regex=r'^[\w.@+-]+$',
-                message='Имя пользователя содержит недопустимый символ'
-            )
+            characters_validator
         ]
     )
 

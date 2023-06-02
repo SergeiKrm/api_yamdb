@@ -169,7 +169,7 @@ def token_create(request):
 
 @api_view(['GET', 'PATCH'])
 @permission_classes([IsAuthenticated])
-def edit_miself(request):
+def edit_myself(request):
     "Изменяет данные своей учетной записи."
     user = User.objects.get(username=request.user.username)
     if request.method == 'PATCH':
