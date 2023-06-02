@@ -3,6 +3,9 @@ from django.db import models
 
 from .validators import characters_validator
 
+MAX_LENGTH_254 = 254
+MAX_LENGTH_150 = 150
+MAX_LENGTH_50 = 50
 
 USER = 'user'
 MODERATOR = 'moderator'
@@ -16,22 +19,22 @@ ROLES = [
 
 class User(AbstractUser):
     username = models.CharField(
-        max_length=150,
+        max_length=MAX_LENGTH_150,
         unique=True,
         blank=False,
         validators=[characters_validator]
     )
     email = models.EmailField(
-        max_length=254,
+        max_length=MAX_LENGTH_254,
         unique=True,
         blank=False
     )
     first_name = models.CharField(
-        max_length=150,
+        max_length=MAX_LENGTH_150,
         blank=True,
     )
     last_name = models.CharField(
-        max_length=150,
+        max_length=MAX_LENGTH_150,
         blank=True,
     )
     bio = models.TextField(
@@ -39,7 +42,7 @@ class User(AbstractUser):
         blank=True,
     )
     role = models.CharField(
-        max_length=50,
+        max_length=MAX_LENGTH_50,
         blank=False,
         choices=ROLES,
         default='user'
