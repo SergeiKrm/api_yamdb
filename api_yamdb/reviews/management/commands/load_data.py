@@ -1,6 +1,7 @@
 import csv
 import os
 from django.core.management.base import BaseCommand
+
 from reviews.models import (
     Category,
     Genre,
@@ -9,10 +10,10 @@ from reviews.models import (
     Comment,
     GenreTitle
 )
-from users.models import User
 from reviews.utils import (
-    get_attrs
+    get_model_instance_params
 )
+from users.models import User
 
 
 MODELS = {
@@ -31,7 +32,6 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('--path', type=str)
-        # parser.add_argument('--model', type=str)
 
     def handle(self, *args, **kwargs):
         for name in MODELS.keys():
@@ -45,14 +45,10 @@ class Command(BaseCommand):
                 reader = csv.DictReader(f)
                 cols = reader.fieldnames
                 for row in reader:
-                    attrs = get_attrs(
-                        model,
+                    attrs = get_model_instance_params(
                         cols,
                         row
                     )
-
-                    if not model.objects.filter(**attrs).exists():
-                        instance = model.objects.create(
-                            **attrs
-                        )
-                        instance.save()
+                    model.objects.get_or_create(
+                        **attrs
+                    )

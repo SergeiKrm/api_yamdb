@@ -4,7 +4,7 @@ from .validators import characters_validator, year_validator
 from users.models import User
 
 
-CHOICES = [(i, i) for i in range(1, 11)]
+SCORE_CHOICES = [(score, score) for score in range(1, 11)]
 
 
 class Category(models.Model):
@@ -107,14 +107,14 @@ class Review(models.Model):
     text = models.TextField()
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='reviews')
-    score = models.IntegerField(choices=CHOICES)
+    score = models.IntegerField(choices=SCORE_CHOICES)
     pub_date = models.DateTimeField(
         'Дата публикации отзыва',
         auto_now_add=True
     )
 
     class Meta:
-        ordering = ['id']
+        ordering = ['pub_date']
         constraints = [
             models.UniqueConstraint(
                 name='duplicate_review_constrain',
@@ -140,7 +140,7 @@ class Comment(models.Model):
     )
 
     class Meta:
-        ordering = ['id']
+        ordering = ['pub_date']
 
     def __str__(self) -> str:
         return self.text
