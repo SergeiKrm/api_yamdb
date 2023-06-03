@@ -1,3 +1,4 @@
+from django.contrib import admin
 from django.urls import include, path
 from rest_framework import routers
 
@@ -29,12 +30,14 @@ router_1.register(
     CommentViewSet,
     basename='comments'
 )
+
 auth_urls = [
     path('auth/signup/', sign_up, name='signup'),
     path('auth/token/', token_create, name='token_craete'),
 ]
 
 urlpatterns = [
+    path('admin/', admin.site.urls),  
     path('users/me/', edit_myself, name='edit_myself'),
     path('', include(router_1.urls)),
     path('', include(auth_urls)),
