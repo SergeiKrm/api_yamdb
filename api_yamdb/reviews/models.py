@@ -1,6 +1,6 @@
 from django.db import models
 
-from .validators import characters_validator, year_validator
+from .validators import year_validator
 from users.models import User
 
 
@@ -17,7 +17,6 @@ class Category(models.Model):
         max_length=50,
         unique=True,
         verbose_name='Слаг',
-        validators=[characters_validator]
     )
 
     class Meta:
