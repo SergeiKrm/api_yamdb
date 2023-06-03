@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
+from django.utils.translation import gettext_lazy as _
 
 
 class CustomRegexValidator(RegexValidator):
@@ -19,3 +20,10 @@ characters_validator = CustomRegexValidator(
     r'^[\w.@+-]+$',
     'Имя пользователя содержит недопустимые символы: %(invalid_symbols)s'
 )
+
+
+def username_not_me_validator(value):
+    if value == 'me':
+        raise ValidationError(
+            _('Использовать имя "me" в качестве username запрещено!')
+        )
