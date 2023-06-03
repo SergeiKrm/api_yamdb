@@ -1,4 +1,3 @@
-from django.core.validators import RegexValidator
 from rest_framework import serializers
 from rest_framework.generics import get_object_or_404
 from rest_framework.relations import SlugRelatedField
@@ -11,7 +10,8 @@ from reviews.models import (
     Review,
     Title
 )
-from users.models import User
+from users.models import User, MAX_LENGTH_254, MAX_LENGTH_150
+from users.validators import characters_validator, username_not_me_validator
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -74,17 +74,15 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     username = serializers.CharField(
-        max_length=150,
+        max_length=MAX_LENGTH_150,
         validators=[
             UniqueValidator(queryset=User.objects.all()),
-            RegexValidator(
-                regex=r'^[\w.@+-]+$',
-                message='Имя пользователя содержит недопустимый символ'
-            )
+            characters_validator,
+            username_not_me_validator
         ]
     )
     email = serializers.EmailField(
-        max_length=254,
+        max_length=MAX_LENGTH_254,
         validators=[UniqueValidator(queryset=User.objects.all())]
     )
 
@@ -99,38 +97,24 @@ class UserSerializer(serializers.ModelSerializer):
             'role'
         )
 
-    def validate_username(self, value):
-        if value == 'me':
-            raise serializers.ValidationError(
-                'Использовать имя "me" в качестве username запрещено!')
-        return value
-
 
 class SignUpSerialier(serializers.ModelSerializer):
     username = serializers.CharField(
-        max_length=150,
+        max_length=MAX_LENGTH_150,
         validators=[
             UniqueValidator(queryset=User.objects.all()),
-            RegexValidator(
-                regex=r'^[\w.@+-]+$',
-                message='Имя пользователя содержит недопустимый символ'
-            )
+            characters_validator,
+            username_not_me_validator
         ]
     )
     email = serializers.EmailField(
-        max_length=254,
+        max_length=MAX_LENGTH_254,
         validators=[UniqueValidator(queryset=User.objects.all())]
     )
 
     class Meta:
         model = User
         fields = ('username', 'email')
-
-    def validate_username(self, value):
-        if value == 'me':
-            raise serializers.ValidationError(
-                'Использовать имя "me" в качестве username запрещено!')
-        return value
 
 
 class TokenCreateSerializer(serializers.Serializer):
@@ -140,13 +124,11 @@ class TokenCreateSerializer(serializers.Serializer):
 
 class EditMyselfSerializer(serializers.ModelSerializer):
     username = serializers.CharField(
-        max_length=150,
+        max_length=MAX_LENGTH_150,
         validators=[
             UniqueValidator(queryset=User.objects.all()),
-            RegexValidator(
-                regex=r'^[\w.@+-]+$',
-                message='Имя пользователя содержит недопустимый символ'
-            )
+            characters_validator,
+            username_not_me_validator
         ]
     )
 

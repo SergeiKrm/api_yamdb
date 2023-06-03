@@ -123,23 +123,27 @@ def sign_up(request):
                                email=request.data.get('email'))
     if not user.exists():
         serializer = SignUpSerialier(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            user = get_object_or_404(
-                User, username=serializer.validated_data['username'])
-            confirmation_code = tokens.default_token_generator.make_token(user)
-            email = serializer.validated_data['email']
-            send_mail(
-                'Use confirmation code to sign up',
-                f'Код подтверждения "{confirmation_code}".',
-                'yamdb@team.com',
-                [f'{email}'],
-                fail_silently=False,
-            )
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    confirmation_code = tokens.default_token_generator.make_token(user[0])
-    email = user[0].email
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        user = get_object_or_404(
+            User, username=serializer.validated_data['username'])
+        confirmation_code = tokens.default_token_generator.make_token(user)
+        email = serializer.validated_data['email']
+        send_mail(
+            'Use confirmation code to sign up',
+            f'Код подтверждения "{confirmation_code}".',
+            'yamdb@team.com',
+            [f'{email}'],
+            fail_silently=False,
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    user = get_object_or_404(
+        User,
+        username=request.data.get('username'),
+        email=request.data.get('email')
+    )
+    confirmation_code = tokens.default_token_generator.make_token(user)
+    email = user.email
     send_mail(
         'Use confirmation code to sign up',
         f'Код подтверждения "{confirmation_code}".',
@@ -155,30 +159,29 @@ def sign_up(request):
 def token_create(request):
     '''Получает JWT-токен в обмен на username и confirmation code.'''
     serializer = TokenCreateSerializer(data=request.data)
-    if serializer.is_valid():
-        user = get_object_or_404(
-            User, username=serializer.validated_data['username'])
-        if tokens.default_token_generator.check_token(
-                user, serializer.validated_data['confirmation_code']):
-            access_token = RefreshToken.for_user(user).access_token
-            return Response(
-                {"token": str(access_token)}, status=status.HTTP_200_OK
-            )
+    serializer.is_valid(raise_exception=True)
+    user = get_object_or_404(
+        User, username=serializer.validated_data['username'])
+    if tokens.default_token_generator.check_token(
+            user, serializer.validated_data['confirmation_code']):
+        access_token = RefreshToken.for_user(user).access_token
+        return Response(
+            {"token": str(access_token)}, status=status.HTTP_200_OK
+        )
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET', 'PATCH'])
 @permission_classes([IsAuthenticated])
-def edit_miself(request):
+def edit_myself(request):
     "Изменяет данные своей учетной записи."
     user = User.objects.get(username=request.user.username)
     if request.method == 'PATCH':
         serializer = EditMyselfSerializer(
             user, data=request.data, partial=True
         )
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
     serializer = EditMyselfSerializer(user)
     return Response(serializer.data, status=status.HTTP_200_OK)

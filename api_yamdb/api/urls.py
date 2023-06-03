@@ -8,7 +8,7 @@ from .views import (
     ReviewViewSet,
     TitleViewSet,
     UserViewSet,
-    edit_miself,
+    edit_myself,
     sign_up,
     token_create
 )
@@ -29,10 +29,13 @@ router_1.register(
     CommentViewSet,
     basename='comments'
 )
-
-urlpatterns = [
-    path('users/me/', edit_miself, name='edit_myself'),
-    path('', include(router_1.urls)),
+auth_urls = [
     path('auth/signup/', sign_up, name='signup'),
     path('auth/token/', token_create, name='token_craete'),
+]
+
+urlpatterns = [
+    path('users/me/', edit_myself, name='edit_myself'),
+    path('', include(router_1.urls)),
+    path('', include(auth_urls)),
 ]
