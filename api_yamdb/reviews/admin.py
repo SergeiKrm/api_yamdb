@@ -10,7 +10,7 @@ class TitleInLine(admin.TabularInline):
     model = Title
 
 
-class CategoryAdmin(admin.ModelAdmin):  #
+class CategoryAdmin(admin.ModelAdmin):
     list_display = ('pk', 'name', 'slug')
     search_fields = ('name', 'slug')
     empty_value_display = '-пусто-'
