@@ -2,11 +2,22 @@ from django.contrib import admin
 from .models import Category, Title, Genre
 
 
-class CategoryAdmin(admin.ModelAdmin):
+class GenreInLine(admin.TabularInline):
+    model = Title.genre.through
+
+
+class TitleInLine(admin.TabularInline):
+    model = Title
+
+
+class CategoryAdmin(admin.ModelAdmin):  #
     list_display = ('pk', 'name', 'slug')
     search_fields = ('name', 'slug')
     empty_value_display = '-пусто-'
     list_editable = ('name', 'slug')
+    inlines = [
+        TitleInLine,
+    ]
 
 
 class GenreAdmin(admin.ModelAdmin):
@@ -21,6 +32,9 @@ class TitlesAdmin(admin.ModelAdmin):
     search_fields = ('name', 'category')
     empty_value_display = '-пусто-'
     list_editable = ('name', 'category')
+    inlines = [
+        GenreInLine,
+    ]
 
 
 admin.site.register(Category, CategoryAdmin)
