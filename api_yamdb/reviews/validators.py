@@ -26,5 +26,6 @@ characters_validator = CustomRegexValidator(
 def year_validator(value):
     if value > timezone.now().year:
         raise ValidationError(
-            'Ошибка ввода года. Вы из будущего? Введите корректный год!'
+            f'Ошибка ввода года. Указан {value}, сейчас {timezone.now().year}.'
+            'Введите корректный год!'
         )

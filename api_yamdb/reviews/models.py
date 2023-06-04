@@ -1,22 +1,23 @@
 from django.db import models
 
 from .validators import year_validator
-from users.models import User
+from users.models import User, MAX_LENGTH_50
 
 
+MAX_LENGTH_256 = 256
 SCORE_CHOICES = [(score, score) for score in range(1, 11)]
 
 
 class Category(models.Model):
     name = models.CharField(
-        max_length=256,
+        max_length=MAX_LENGTH_256,
         verbose_name='Название',
         help_text='Выберите категорию'
     )
     slug = models.SlugField(
-        max_length=50,
+        max_length=MAX_LENGTH_50,
         unique=True,
-        verbose_name='Слаг',
+        verbose_name='Слаг'
     )
 
     class Meta:
@@ -30,11 +31,15 @@ class Category(models.Model):
 
 class Genre(models.Model):
     name = models.CharField(
-        max_length=256,
+        max_length=MAX_LENGTH_256,
         verbose_name='Название',
         help_text='Выберите жанр'
     )
-    slug = models.SlugField(max_length=50, unique=True, verbose_name='Слаг')
+    slug = models.SlugField(
+        max_length=MAX_LENGTH_50,
+        unique=True,
+        verbose_name='Слаг'
+    )
 
     class Meta:
         ordering = ['name']
@@ -47,7 +52,7 @@ class Genre(models.Model):
 
 class Title(models.Model):
     name = models.CharField(
-        max_length=256,
+        max_length=MAX_LENGTH_256,
         verbose_name='Название',
         help_text='Выберите название произведения'
     )
