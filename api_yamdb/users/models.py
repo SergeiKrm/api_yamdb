@@ -6,7 +6,10 @@ from api_yamdb.settings import (
     MAX_FIELD_LENGTH_150,
     MAX_FIELD_LENGTH_50
 )
-from .validators import characters_validator, username_not_me_validator
+from validators.validators import (
+    characters_validator,
+    username_not_me_validator
+)
 
 
 USER = 'user'

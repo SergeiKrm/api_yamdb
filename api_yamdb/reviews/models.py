@@ -2,7 +2,8 @@ from django.db import models
 
 from api_yamdb.settings import MAX_FIELD_LENGTH_256, MAX_FIELD_LENGTH_50
 from users.models import User
-from .validators import year_validator
+from validators.validators import year_validator
+
 
 MAX_SCORE_PLUS_1 = 11
 MIN_SCORE = 1
@@ -60,8 +61,8 @@ class Title(models.Model):
         help_text='Выберите название произведения'
     )
     year = models.IntegerField(
-        validators=[year_validator],
         verbose_name='Год',
+        validators=[year_validator]
     )
     category = models.ForeignKey(
         Category,

@@ -12,7 +12,10 @@ from reviews.models import (
     Title
 )
 from users.models import User
-from users.validators import characters_validator, username_not_me_validator
+from validators.validators import (
+    characters_validator,
+    username_not_me_validator
+)
 
 
 class CategorySerializer(serializers.ModelSerializer):

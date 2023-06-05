@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'reviews.apps.ReviewsConfig',
     'api.apps.ApiConfig',
     'users.apps.UsersConfig',
+    'validators.apps.ValidatorsConfig',
 ]
 
 MIDDLEWARE = [
