@@ -1,27 +1,30 @@
 from django.db import models
 
+from api_yamdb.settings import MAX_FIELD_LENGTH_256, MAX_FIELD_LENGTH_50
+from users.models import User
 from .validators import year_validator
-from users.models import User, MAX_LENGTH_50
 
-
-MAX_LENGTH_256 = 256
-SCORE_CHOICES = [(score, score) for score in range(1, 11)]
+MAX_SCORE_PLUS_1 = 11
+MIN_SCORE = 1
+SCORE_CHOICES = [
+    (score, score) for score in range(MIN_SCORE, MAX_SCORE_PLUS_1)
+]
 
 
 class Category(models.Model):
     name = models.CharField(
-        max_length=MAX_LENGTH_256,
+        max_length=MAX_FIELD_LENGTH_256,
         verbose_name='Название',
         help_text='Выберите категорию'
     )
     slug = models.SlugField(
-        max_length=MAX_LENGTH_50,
+        max_length=MAX_FIELD_LENGTH_50,
         unique=True,
         verbose_name='Слаг'
     )
 
     class Meta:
-        ordering = ['name']
+        ordering = ('name',)
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
 
@@ -31,18 +34,18 @@ class Category(models.Model):
 
 class Genre(models.Model):
     name = models.CharField(
-        max_length=MAX_LENGTH_256,
+        max_length=MAX_FIELD_LENGTH_256,
         verbose_name='Название',
         help_text='Выберите жанр'
     )
     slug = models.SlugField(
-        max_length=MAX_LENGTH_50,
+        max_length=MAX_FIELD_LENGTH_50,
         unique=True,
         verbose_name='Слаг'
     )
 
     class Meta:
-        ordering = ['name']
+        ordering = ('name',)
         verbose_name = 'Жанр'
         verbose_name_plural = 'Жанры'
 
@@ -52,7 +55,7 @@ class Genre(models.Model):
 
 class Title(models.Model):
     name = models.CharField(
-        max_length=MAX_LENGTH_256,
+        max_length=MAX_FIELD_LENGTH_256,
         verbose_name='Название',
         help_text='Выберите название произведения'
     )
@@ -79,7 +82,7 @@ class Title(models.Model):
         verbose_name='Описание')
 
     class Meta:
-        ordering = ['name']
+        ordering = ('name',)
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'
 
@@ -101,6 +104,9 @@ class GenreTitle(models.Model):
         null=True
     )
 
+    class Meta:
+        ordering = ('title',)
+
 
 class Review(models.Model):
     title = models.ForeignKey(
@@ -118,7 +124,7 @@ class Review(models.Model):
     )
 
     class Meta:
-        ordering = ['pub_date']
+        ordering = ('pub_date',)
         constraints = [
             models.UniqueConstraint(
                 name='duplicate_review_constrain',
@@ -144,7 +150,7 @@ class Comment(models.Model):
     )
 
     class Meta:
-        ordering = ['pub_date']
+        ordering = ('pub_date',)
 
     def __str__(self) -> str:
         return self.text

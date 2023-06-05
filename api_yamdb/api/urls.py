@@ -15,17 +15,17 @@ from .views import (
 )
 
 
-router_1 = routers.DefaultRouter()
-router_1.register(r'genres', GenreViewSet, basename='genres')
-router_1.register(r'categories', CategoryViewSet, basename='categories')
-router_1.register(r'titles', TitleViewSet, basename='titles')
-router_1.register('users', UserViewSet)
-router_1.register(
+router_v1 = routers.DefaultRouter()
+router_v1.register(r'genres', GenreViewSet, basename='genres')
+router_v1.register(r'categories', CategoryViewSet, basename='categories')
+router_v1.register(r'titles', TitleViewSet, basename='titles')
+router_v1.register('users', UserViewSet)
+router_v1.register(
     r'titles/(?P<title_id>\d+)/reviews',
     ReviewViewSet,
     basename='reviews'
 )
-router_1.register(
+router_v1.register(
     r'titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)/comments',
     CommentViewSet,
     basename='comments'
@@ -38,6 +38,6 @@ auth_urls = [
 
 urlpatterns = [
     path('users/me/', edit_myself, name='edit_myself'),
-    path('', include(router_1.urls)),
+    path('', include(router_v1.urls)),
     path('', include(auth_urls)),
 ]

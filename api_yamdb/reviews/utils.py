@@ -7,7 +7,7 @@ from reviews.models import (
 from users.models import User
 
 
-related_fields = {
+art_piece_characteristic = {
     'category': Category,
     'genre_id': Genre,
     'title_id': Title,
@@ -16,19 +16,19 @@ related_fields = {
 }
 
 
-def get_model_instance_params(col_names, row):
+def get_model_instance_params(column_names, row):
     attrs = {}
-    for i in col_names:
-        if i == 'id':
-            attrs[i] = int(row[i])
-        elif i not in related_fields:
-            attrs[i] = row[i]
+    for column_name in column_names:
+        if column_name == 'id':
+            attrs[column_name] = int(row[column_name])
+        elif column_name not in art_piece_characteristic:
+            attrs[column_name] = row[column_name]
         else:
-            model = related_fields[i]
+            model = art_piece_characteristic[column_name]
             try:
-                attrs[i.replace('_id', '')] = model.objects.get(
-                    id=int(row[i])
+                attrs[column_name.replace('_id', '')] = model.objects.get(
+                    id=int(row[column_name])
                 )
             except model.DoesNotExist:
-                attrs[i.replace('_id', '')] = None
+                attrs[column_name.replace('_id', '')] = None
     return attrs

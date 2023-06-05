@@ -3,6 +3,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.relations import SlugRelatedField
 from rest_framework.validators import UniqueValidator
 
+from api_yamdb.settings import MAX_FIELD_LENGTH_254, MAX_FIELD_LENGTH_150
 from reviews.models import (
     Category,
     Comment,
@@ -10,8 +11,7 @@ from reviews.models import (
     Review,
     Title
 )
-
-from users.models import User, MAX_LENGTH_254, MAX_LENGTH_150
+from users.models import User
 from users.validators import characters_validator, username_not_me_validator
 
 
@@ -75,7 +75,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     username = serializers.CharField(
-        max_length=MAX_LENGTH_150,
+        max_length=MAX_FIELD_LENGTH_150,
         validators=[
             UniqueValidator(queryset=User.objects.all()),
             characters_validator,
@@ -83,7 +83,7 @@ class UserSerializer(serializers.ModelSerializer):
         ]
     )
     email = serializers.EmailField(
-        max_length=MAX_LENGTH_254,
+        max_length=MAX_FIELD_LENGTH_254,
         validators=[UniqueValidator(queryset=User.objects.all())]
     )
 
@@ -99,19 +99,7 @@ class UserSerializer(serializers.ModelSerializer):
         )
 
 
-class SignUpSerialier(serializers.ModelSerializer):
-    username = serializers.CharField(
-        max_length=MAX_LENGTH_150,
-        validators=[
-            UniqueValidator(queryset=User.objects.all()),
-            characters_validator,
-            username_not_me_validator
-        ]
-    )
-    email = serializers.EmailField(
-        max_length=MAX_LENGTH_254,
-        validators=[UniqueValidator(queryset=User.objects.all())]
-    )
+class SignUpSerialier(UserSerializer):
 
     class Meta:
         model = User
@@ -125,7 +113,7 @@ class TokenCreateSerializer(serializers.Serializer):
 
 class EditMyselfSerializer(serializers.ModelSerializer):
     username = serializers.CharField(
-        max_length=MAX_LENGTH_150,
+        max_length=MAX_FIELD_LENGTH_150,
         validators=[
             UniqueValidator(queryset=User.objects.all()),
             characters_validator,

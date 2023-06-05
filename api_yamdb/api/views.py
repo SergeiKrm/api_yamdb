@@ -136,7 +136,7 @@ def sign_up(request):
         confirmation_code = tokens.default_token_generator.make_token(user)
         email = serializer.validated_data['email']
         send_mail(
-            'Use confirmation code to sign up',
+            'Используйте код подтверждения для получения JWT-токена',
             f'Код подтверждения "{confirmation_code}".',
             'yamdb@team.com',
             [f'{email}'],
