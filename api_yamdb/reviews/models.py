@@ -5,10 +5,10 @@ from users.models import User
 from validators.validators import year_validator
 
 
-MAX_SCORE_PLUS_1 = 11
+MAX_SCORE = 10
 MIN_SCORE = 1
 SCORE_CHOICES = [
-    (score, score) for score in range(MIN_SCORE, MAX_SCORE_PLUS_1)
+    (score, score) for score in range(MIN_SCORE, MAX_SCORE + 1)
 ]
 
 
