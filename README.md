@@ -13,7 +13,7 @@
 
 - Склонируйте проект с GitHub с помощью команды
 ```
-git clone git@github.com:SergeiKrm/infra_sprint1.git
+git clone git@github.com:SergeiKrm/api_yamdb.git
 ```
 
 - Откройте папку с проектом на локальном компьютере, разверните и активируйте виртуальное окружение командами
