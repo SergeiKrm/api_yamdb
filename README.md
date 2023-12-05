@@ -19,7 +19,7 @@ git clone git@github.com:SergeiKrm/api_yamdb.git
 - Откройте папку с проектом на локальном компьютере, разверните и активируйте виртуальное окружение командами
 ```
 python -m venv venv
-source venv/bin/activate
+source venv/Scripts/activate
 ```
 
 - Из корневой папки при активированном виртуальном окружении выполните команду 
